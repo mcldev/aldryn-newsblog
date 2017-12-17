@@ -14,6 +14,8 @@ from aldryn_people.models import Person
 from aldryn_reversion.admin import VersionedPlaceholderAdminMixin
 from aldryn_translation_tools.admin import AllTranslationsMixin
 
+from taggit_autosuggest.widgets import TagAutoSuggest
+
 from . import models
 
 
@@ -96,6 +98,8 @@ class ArticleAdminForm(TranslatableModelForm):
         if ('related' in self.fields and
                 hasattr(self.fields['related'], 'widget')):
             self.fields['related'].widget.can_add_related = False
+
+        self.fields['tags'].widget = TagAutoSuggest('taggit.Tag')
 
 
 class ArticleAdmin(
