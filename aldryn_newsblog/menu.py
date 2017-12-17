@@ -13,6 +13,11 @@ from cms.apphook_pool import apphook_pool
 from menus.base import NavigationNode
 from menus.menu_pool import menu_pool
 
+try:
+    from django.contrib.sites.shortcuts import get_current_site
+except ImportError:
+    from django.contrib.sites.models import get_current_site
+
 from .models import Article
 
 
@@ -29,13 +34,20 @@ class NewsBlogMenu(CMSAttachMenu):
     def get_nodes(self, request):
         nodes = []
         language = get_language_from_request(request, check_path=True)
+
+        current_site = get_current_site(request)
+
+        if self.instance.site != current_site:
+            return []
+
         articles = self.get_queryset(request).active_translations(language)
 
         if hasattr(self, 'instance') and self.instance:
             app = apphook_pool.get_apphook(self.instance.application_urls)
-            config = app.get_config(self.instance.application_namespace)
-            if config:
-                articles = articles.filter(app_config=config)
+            if app:
+                config = app.get_config(self.instance.application_namespace)
+                if config:
+                    articles = articles.filter(app_config=config)
 
         for article in articles:
             try:
