@@ -285,6 +285,8 @@ class NewsBlogCMSPlugin(CMSPlugin):
 
     app_config = models.ForeignKey(NewsBlogConfig, verbose_name=_('Apphook configuration'))
 
+    render_template_choice = models.CharField(max_length=500, blank=True, null=True)
+
     class Meta:
         abstract = True
 
