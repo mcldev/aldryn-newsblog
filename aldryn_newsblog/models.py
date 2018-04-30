@@ -32,7 +32,6 @@ from taggit.models import Tag
 
 from .cms_appconfig import NewsBlogConfig
 from .managers import RelatedManager
-from .settings import ENABLE_REVERSION
 from .utils import get_plugin_index_data, get_request, strip_tags
 
 try:
@@ -63,6 +62,7 @@ SQL_IS_TRUE = {
 }[connection.vendor]
 
 
+@python_2_unicode_compatible
 class Article(TranslatedAutoSlugifyMixin,
               TranslationHelperMixin,
               TranslatableModel):
@@ -235,9 +235,6 @@ class Article(TranslatedAutoSlugifyMixin,
 
         # Ensure there is an owner.
         if self.app_config.create_authors and self.author is None:
-            # TODO: With django-parler 1.8 and Django 1.11 get_or_create() is
-            #       not working with translated fields yet:
-            #       https://github.com/django-parler/django-parler/issues/189
             self.author = Person.objects.get_or_create(
                 user=self.owner,
                 defaults={
@@ -567,9 +564,3 @@ def update_search_data(sender, instance, **kwargs):
                     instance.language).get(content=placeholder.pk)
                 article.search_data = article.get_search_data(instance.language)
                 article.save()
-
-
-if ENABLE_REVERSION:
-    from aldryn_reversion.core import version_controlled_content
-    Article = version_controlled_content(Article, follow=['app_config'])
-Article = python_2_unicode_compatible(Article)
