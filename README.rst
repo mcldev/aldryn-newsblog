@@ -1,3 +1,11 @@
+**Deprecated**
+
+This project is no longer supported.
+
+Divio will undertake no further development or maintenance of this project. If you are interested in continuing to develop it, use the fork functionality from GitHub. We are not able to transfer ownership of the repository to another party.
+
+Please have a look at alternatives such as `djangocms-blog <https://github.com/nephila/djangocms-blog>`_.
+
 #################################
 Aldryn News & Blog for django CMS
 #################################
@@ -37,13 +45,14 @@ You can also find instructions on `how to upgrade`_ from earlier versions.
 Contributing
 ============
 
-This is a community project. We love to get any feedback in the form of
-`issues`_ and `pull requests`_. Before submitting your pull request, please
-review our guidelines for `Aldryn addons`_.
+This is a an open-source project. We'll be delighted to receive your
+feedback in the form of issues and pull requests. Before submitting your
+pull request, please review our `contribution guidelines
+<http://docs.django-cms.org/en/latest/contributing/index.html>`_.
 
-.. _issues: https://github.com/aldryn/aldryn-newsblog/issues
-.. _pull requests: https://github.com/aldryn/aldryn-newsblog/pulls
-.. _Aldryn addons: http://docs.aldryn.com/en/latest/reference/addons/index.html
+We're grateful to all contributors who have helped create and maintain this package.
+Contributors are listed at the `contributors <https://github.com/divio/aldryn-newsblog/graphs/contributors>`_
+section.
 
 
 .. |PyPI Version| image:: http://img.shields.io/pypi/v/aldryn-newsblog.svg
