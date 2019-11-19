@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
-import taggit.managers
-import aldryn_categories.fields
-import aldryn_newsblog.models
-import filer.fields.image
-from django.conf import settings
-import sortedm2m.fields
-import django.utils.timezone
-import djangocms_text_ckeditor.fields
-import cms.models.fields
-import app_data.fields
-import aldryn_apphooks_config.fields
 import django.core.validators
+import django.db.models.deletion
+import django.utils.timezone
+from django.conf import settings
+from django.db import migrations, models
+
+import cms.models.fields
+
+import aldryn_apphooks_config.fields
+import aldryn_categories.fields
+import app_data.fields
+import djangocms_text_ckeditor.fields
+import filer.fields.image
+import sortedm2m.fields
+import taggit.managers
+
+import aldryn_newsblog.models
 
 
 class Migration(migrations.Migration):
@@ -53,7 +57,7 @@ class Migration(migrations.Migration):
                 ('meta_description', models.TextField(default='', verbose_name='meta description', blank=True)),
                 ('meta_keywords', models.TextField(default='', verbose_name='meta keywords', blank=True)),
                 ('search_data', models.TextField(editable=False, blank=True)),
-                ('master', models.ForeignKey(related_name='translations', editable=False, to='aldryn_newsblog.Article', null=True)),
+                ('master', models.ForeignKey(related_name='translations', editable=False, to='aldryn_newsblog.Article', null=True, on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'managed': True,
@@ -67,7 +71,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogArchivePlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -77,7 +81,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogArticleSearchPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=django.db.models.deletion.CASCADE)),
                 ('max_articles', models.PositiveIntegerField(default=10, help_text='The maximum number of found articles display.', verbose_name='max articles', validators=[django.core.validators.MinValueValidator(1)])),
             ],
             options={
@@ -88,7 +92,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogAuthorsPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -98,7 +102,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogCategoriesPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -136,7 +140,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('language_code', models.CharField(max_length=15, verbose_name='Language', db_index=True)),
                 ('app_title', models.CharField(max_length=234, verbose_name='application title')),
-                ('master', models.ForeignKey(related_name='translations', editable=False, to='aldryn_newsblog.NewsBlogConfig', null=True)),
+                ('master', models.ForeignKey(related_name='translations', editable=False, to='aldryn_newsblog.NewsBlogConfig', null=True, on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'managed': True,
@@ -150,9 +154,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogFeaturedArticlesPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=django.db.models.deletion.CASCADE)),
                 ('article_count', models.PositiveIntegerField(default=1, help_text='The maximum number of featured articles display.', validators=[django.core.validators.MinValueValidator(1)])),
-                ('app_config', models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig')),
+                ('app_config', models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -162,9 +166,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogLatestArticlesPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=django.db.models.deletion.CASCADE)),
                 ('latest_articles', models.IntegerField(default=5, help_text='The maximum number of latest articles to display.')),
-                ('app_config', models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig')),
+                ('app_config', models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -174,7 +178,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogRelatedPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -184,8 +188,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogTagsPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
-                ('app_config', models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=django.db.models.deletion.CASCADE)),
+                ('app_config', models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -194,35 +198,35 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='newsblogconfigtranslation',
-            unique_together=set([('language_code', 'master')]),
+            unique_together={('language_code', 'master')},
         ),
         migrations.AddField(
             model_name='newsblogcategoriesplugin',
             name='app_config',
-            field=models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='newsblogauthorsplugin',
             name='app_config',
-            field=models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='newsblogarticlesearchplugin',
             name='app_config',
-            field=models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='newsblogarchiveplugin',
             name='app_config',
-            field=models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
             name='articletranslation',
-            unique_together=set([('language_code', 'master'), ('language_code', 'slug')]),
+            unique_together={('language_code', 'master'), ('language_code', 'slug')},
         ),
         migrations.AddField(
             model_name='article',
@@ -233,7 +237,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='article',
             name='author',
-            field=models.ForeignKey(verbose_name='author', blank=True, to='aldryn_people.Person', null=True),
+            field=models.ForeignKey(verbose_name='author', blank=True, to='aldryn_people.Person', null=True, on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -251,13 +255,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='article',
             name='featured_image',
-            field=filer.fields.image.FilerImageField(blank=True, to='filer.Image', null=True),
+            field=filer.fields.image.FilerImageField(blank=True, to='filer.Image', null=True, on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='article',
             name='owner',
-            field=models.ForeignKey(verbose_name='owner', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(verbose_name='owner', to=settings.AUTH_USER_MODEL, on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(

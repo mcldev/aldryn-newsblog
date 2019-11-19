@@ -3,21 +3,20 @@
 from __future__ import unicode_literals
 
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
-from django.utils.translation import (
-    ugettext as _, get_language_from_request, override)
+from django.urls import reverse
+from django.utils.translation import get_language_from_request, override
+from django.utils.translation import ugettext as _
 
 from cms.toolbar_base import CMSToolbar
 from cms.toolbar_pool import toolbar_pool
 
 from aldryn_apphooks_config.utils import get_app_instance
 from aldryn_translation_tools.utils import (
-    get_object_from_request,
-    get_admin_url,
+    get_admin_url, get_object_from_request,
 )
 
-from .models import Article
 from .cms_appconfig import NewsBlogConfig
+from .models import Article
 
 
 @toolbar_pool.register

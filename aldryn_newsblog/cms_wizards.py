@@ -7,12 +7,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.api import add_plugin
 from cms.utils import permissions
-from cms.wizards.wizard_pool import wizard_pool
-from cms.wizards.wizard_base import Wizard
 from cms.wizards.forms import BaseFormMixin
+from cms.wizards.wizard_base import Wizard
+from cms.wizards.wizard_pool import wizard_pool
 
-from djangocms_text_ckeditor.widgets import TextEditorWidget
 from djangocms_text_ckeditor.html import clean_html
+from djangocms_text_ckeditor.widgets import TextEditorWidget
 from parler.forms import TranslatableModelForm
 
 from .cms_appconfig import NewsBlogConfig

@@ -5,23 +5,16 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
-try:
-    from django.contrib.sites.shortcuts import get_current_site
-except ImportError:
-    # Django 1.6
-    from django.contrib.sites.models import get_current_site
-from django.core.urlresolvers import reverse, NoReverseMatch
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import models
-from django.template import RequestContext
 from django.test import RequestFactory
+from django.urls import NoReverseMatch, reverse
 from django.utils import translation
-try:
-    from django.utils.encoding import force_unicode
-except ImportError:
-    from django.utils.encoding import force_text as force_unicode
+from django.utils.encoding import force_text
 from django.utils.html import strip_tags as _strip_tags
 from django.utils.text import smart_split
 
+from cms.plugin_rendering import ContentRenderer
 from cms.utils.i18n import force_language, get_language_object
 
 from lxml.html.clean import Cleaner as LxmlCleaner
@@ -29,7 +22,7 @@ from lxml.html.clean import Cleaner as LxmlCleaner
 
 def default_reverse(*args, **kwargs):
     """
-    Acts just like django.core.urlresolvers.reverse() except that if the
+    Acts just like django.urls.reverse() except that if the
     resolver raises a NoReverseMatch exception, then a default value will be
     returned instead. If no default value is provided, then the exception will
     be raised as normal.
@@ -80,7 +73,7 @@ def strip_tags(value):
 
 
 def get_cleaned_bits(data):
-    decoded = force_unicode(data)
+    decoded = force_text(data)
     stripped = strip_tags(decoded)
     return smart_split(stripped)
 
@@ -109,20 +102,26 @@ def get_field_value(obj, name):
     return value
 
 
+def render_plugin(request, plugin_instance):
+    renderer = ContentRenderer(request)
+    context = {'request': request}
+    return renderer.render_plugin(plugin_instance, context)
+
+
 def get_plugin_index_data(base_plugin, request):
     text_bits = []
 
-    instance, plugin_type = base_plugin.get_plugin_instance()
+    plugin_instance, plugin_type = base_plugin.get_plugin_instance()
 
-    if instance is None:
+    if plugin_instance is None:
         # this is an empty plugin
         return text_bits
 
-    search_fields = getattr(instance, 'search_fields', [])
+    search_fields = getattr(plugin_instance, 'search_fields', [])
 
-    if hasattr(instance, 'search_fulltext'):
+    if hasattr(plugin_instance, 'search_fulltext'):
         # check if the plugin instance has search enabled
-        search_contents = instance.search_fulltext
+        search_contents = plugin_instance.search_fulltext
     elif hasattr(base_plugin, 'search_fulltext'):
         # now check in the base plugin instance (CMSPlugin)
         search_contents = base_plugin.search_fulltext
@@ -135,13 +134,11 @@ def get_plugin_index_data(base_plugin, request):
         search_contents = not bool(search_fields)
 
     if search_contents:
-        plugin_contents = instance.render_plugin(
-            context=RequestContext(request))
-
+        plugin_contents = render_plugin(request, plugin_instance)
         if plugin_contents:
             text_bits = get_cleaned_bits(plugin_contents)
     else:
-        values = (get_field_value(instance, field) for field in search_fields)
+        values = (get_field_value(plugin_instance, field) for field in search_fields)
 
         for value in values:
             cleaned_bits = get_cleaned_bits(value or '')
