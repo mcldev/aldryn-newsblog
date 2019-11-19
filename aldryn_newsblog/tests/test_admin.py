@@ -4,9 +4,10 @@ from __future__ import unicode_literals
 
 from django.test import TransactionTestCase
 
+from aldryn_people.models import Person
+
 from aldryn_newsblog.cms_appconfig import NewsBlogConfig
 from aldryn_newsblog.models import Article
-from aldryn_people.models import Person
 
 from . import NewsBlogTestsMixin
 

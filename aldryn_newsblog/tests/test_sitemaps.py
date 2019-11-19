@@ -2,15 +2,12 @@
 
 from __future__ import unicode_literals
 
-from . import NewsBlogTestCase
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.translation import override
+
 from aldryn_newsblog.sitemaps import NewsBlogSitemap
 
-try:
-    from django.contrib.sites.shortcuts import get_current_site
-except ImportError:
-    # Django 1.6
-    from django.contrib.sites.models import get_current_site
-from django.utils.translation import override
+from . import NewsBlogTestCase
 
 
 class TestSitemaps(NewsBlogTestCase):

@@ -2,12 +2,8 @@
 
 from __future__ import unicode_literals
 
-try:
-    from collections import Counter
-except ImportError:
-    from backport_collections import Counter
-
 import datetime
+from collections import Counter
 from operator import attrgetter
 
 from django.db import models
@@ -17,6 +13,8 @@ from aldryn_apphooks_config.managers.base import ManagerMixin, QuerySetMixin
 from aldryn_people.models import Person
 from parler.managers import TranslatableManager, TranslatableQuerySet
 from taggit.models import Tag, TaggedItem
+
+from aldryn_newsblog.compat import toolbar_edit_mode_active
 
 
 class ArticleQuerySet(QuerySetMixin, TranslatableQuerySet):
@@ -58,8 +56,8 @@ class RelatedManager(ManagerMixin, TranslatableManager):
         # TODO: check if this limitation still exists in Django 1.6+
         # This is done in a naive way as Django is having tough time while
         # aggregating on date fields
-        if (request and hasattr(request, 'toolbar') and
-                request.toolbar and request.toolbar.edit_mode):
+        if (request and hasattr(request, 'toolbar') and  # noqa: #W504
+                request.toolbar and toolbar_edit_mode_active(request)):
             articles = self.namespace(namespace)
         else:
             articles = self.published().namespace(namespace)
@@ -96,8 +94,8 @@ class RelatedManager(ManagerMixin, TranslatableManager):
 
         Return list of Tag objects ordered by custom 'num_articles' attribute.
         """
-        if (request and hasattr(request, 'toolbar') and
-                request.toolbar and request.toolbar.edit_mode):
+        if (request and hasattr(request, 'toolbar') and  # noqa: #W504
+                request.toolbar and toolbar_edit_mode_active(request)):
             articles = self.namespace(namespace)
         else:
             articles = self.published().namespace(namespace)
