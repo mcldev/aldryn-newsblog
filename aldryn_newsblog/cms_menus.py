@@ -2,16 +2,16 @@
 
 from __future__ import unicode_literals
 
-from django.core.urlresolvers import NoReverseMatch
-from django.utils.translation import (
-    get_language_from_request,
-    ugettext_lazy as _,
-)
+from django.urls import NoReverseMatch
+from django.utils.translation import get_language_from_request
+from django.utils.translation import ugettext_lazy as _
 
-from cms.menu_bases import CMSAttachMenu
 from cms.apphook_pool import apphook_pool
+from cms.menu_bases import CMSAttachMenu
 from menus.base import NavigationNode
 from menus.menu_pool import menu_pool
+
+from aldryn_newsblog.compat import toolbar_edit_mode_active
 
 from .models import Article
 
@@ -22,7 +22,7 @@ class NewsBlogMenu(CMSAttachMenu):
     def get_queryset(self, request):
         """Returns base queryset with support for preview-mode."""
         queryset = Article.objects
-        if not (request.toolbar and request.toolbar.edit_mode):
+        if not (request.toolbar and toolbar_edit_mode_active(request)):
             queryset = queryset.published()
         return queryset
 
@@ -33,7 +33,10 @@ class NewsBlogMenu(CMSAttachMenu):
 
         if hasattr(self, 'instance') and self.instance:
             app = apphook_pool.get_apphook(self.instance.application_urls)
+
+        if app:
             config = app.get_config(self.instance.application_namespace)
+
             if config:
                 articles = articles.filter(app_config=config)
 

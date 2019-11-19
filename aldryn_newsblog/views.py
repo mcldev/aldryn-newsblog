@@ -2,14 +2,11 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime, date
-from dateutil.relativedelta import relativedelta
+from datetime import date, datetime
 
 from django.db.models import Q
 from django.http import (
-    Http404,
-    HttpResponseRedirect,
-    HttpResponsePermanentRedirect,
+    Http404, HttpResponsePermanentRedirect, HttpResponseRedirect,
 )
 from django.shortcuts import get_object_or_404
 from django.utils import translation
@@ -17,14 +14,17 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 
 from menus.utils import set_language_changer
-from parler.views import TranslatableSlugMixin, ViewUrlMixin
-from taggit.models import Tag
 
 from aldryn_apphooks_config.mixins import AppConfigMixin
 from aldryn_categories.models import Category
 from aldryn_people.models import Person
+from dateutil.relativedelta import relativedelta
+from parler.views import TranslatableSlugMixin, ViewUrlMixin
+from taggit.models import Tag
 
+from aldryn_newsblog.compat import toolbar_edit_mode_active
 from aldryn_newsblog.utils.utilities import get_valid_languages_from_request
+
 from .models import Article
 from .utils import add_prefix_to_path
 
@@ -32,7 +32,7 @@ from .utils import add_prefix_to_path
 class TemplatePrefixMixin(object):
 
     def prefix_template_names(self, template_names):
-        if (hasattr(self.config, 'template_prefix') and
+        if (hasattr(self.config, 'template_prefix') and  # noqa: W504
                 self.config.template_prefix):
             prefix = self.config.template_prefix
             return [
@@ -54,7 +54,7 @@ class EditModeMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         self.edit_mode = (
-            self.request.toolbar and self.request.toolbar.edit_mode)
+            self.request.toolbar and toolbar_edit_mode_active(self.request))
         return super(EditModeMixin, self).dispatch(request, *args, **kwargs)
 
 
@@ -114,7 +114,7 @@ class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
             self.object = self.get_object()
         set_language_changer(request, self.object.get_absolute_url)
         url = self.object.get_absolute_url()
-        if (self.config.non_permalink_handling == 200 or request.path == url):
+        if self.config.non_permalink_handling == 200 or request.path == url:
             # Continue as normal
             return super(ArticleDetail, self).get(request, *args, **kwargs)
 
@@ -126,6 +126,9 @@ class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
             return HttpResponsePermanentRedirect(url)
         else:
             raise Http404('This is not the canonical uri of this object.')
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         """
@@ -233,6 +236,9 @@ class ArticleList(ArticleListBase):
     """A complete list of articles."""
     show_header = True
 
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
     def get_queryset(self):
         qs = super(ArticleList, self).get_queryset()
         # exclude featured articles from queryset, to allow featured article
@@ -256,8 +262,11 @@ class ArticleSearchResultsList(ArticleListBase):
     def get(self, request, *args, **kwargs):
         self.query = request.GET.get('q')
         self.max_articles = request.GET.get('max_articles', 0)
-        self.edit_mode = (request.toolbar and request.toolbar.edit_mode)
-        return super(ArticleSearchResultsList, self).get(request)
+        self.edit_mode = (request.toolbar and toolbar_edit_mode_active(request))
+        return super(ArticleSearchResultsList, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
 
     def get_paginate_by(self, queryset):
         """
@@ -273,8 +282,8 @@ class ArticleSearchResultsList(ArticleListBase):
             qs = qs.published()
         if self.query:
             return qs.filter(
-                Q(translations__title__icontains=self.query) |
-                Q(translations__lead_in__icontains=self.query) |
+                Q(translations__title__icontains=self.query) |  # noqa: #W504
+                Q(translations__lead_in__icontains=self.query) |  # noqa: #W504
                 Q(translations__search_data__icontains=self.query)
             ).distinct()
         else:
@@ -302,14 +311,17 @@ class AuthorArticleList(ArticleListBase):
             author=self.author
         )
 
-    def get(self, request, author):
+    def get(self, request, author, *args, **kwargs):
         language = translation.get_language_from_request(
             request, check_path=True)
         self.author = Person.objects.language(language).active_translations(
             language, slug=author).first()
         if not self.author:
             raise Http404('Author not found')
-        return super(AuthorArticleList, self).get(request)
+        return super(AuthorArticleList, self).get(request, *args, **kwargs)
+
+    def post(self, request, author, *args, **kwargs):
+        return self.get(request, author, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['newsblog_author'] = self.author
@@ -323,10 +335,13 @@ class CategoryArticleList(ArticleListBase):
             categories=self.category
         )
 
-    def get(self, request, category):
+    def get(self, request, category, *args, **kwargs):
         self.category = get_object_or_404(
             Category, translations__slug=category)
-        return super(CategoryArticleList, self).get(request)
+        return super(CategoryArticleList, self).get(request, *args, **kwargs)
+
+    def post(self, request, category, *args, **kwargs):
+        return self.get(request, category, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['newsblog_category'] = self.category
@@ -342,9 +357,12 @@ class TagArticleList(ArticleListBase):
             tags=self.tag
         )
 
-    def get(self, request, tag):
+    def get(self, request, tag, *args, **kwargs):
         self.tag = get_object_or_404(Tag, slug=tag)
-        return super(TagArticleList, self).get(request)
+        return super(TagArticleList, self).get(request, *args, **kwargs)
+
+    def post(self, request, tag, *args, **kwargs):
+        return self.get(request, tag, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['newsblog_tag'] = self.tag
@@ -360,12 +378,15 @@ class DateRangeArticleList(ArticleListBase):
         )
 
     def _daterange_from_kwargs(self, kwargs):
-        raise NotImplemented('Subclasses of DateRangeArticleList need to'
-                             'implement `_daterange_from_kwargs`.')
+        raise NotImplementedError('Subclasses of DateRangeArticleList need to'
+                                  'implement `_daterange_from_kwargs`.')
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.date_from, self.date_to = self._daterange_from_kwargs(kwargs)
-        return super(DateRangeArticleList, self).get(request)
+        return super(DateRangeArticleList, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['newsblog_day'] = (

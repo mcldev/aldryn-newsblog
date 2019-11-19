@@ -4,12 +4,12 @@ from __future__ import unicode_literals
 
 from datetime import timedelta
 
-from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase
+from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import override
 
-from aldryn_newsblog.feeds import LatestArticlesFeed, TagFeed, CategoryFeed
+from aldryn_newsblog.feeds import CategoryFeed, LatestArticlesFeed, TagFeed
 
 from . import NewsBlogTestsMixin
 

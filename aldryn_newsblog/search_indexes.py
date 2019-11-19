@@ -3,9 +3,8 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 
-from haystack.constants import DEFAULT_ALIAS
-
 from aldryn_search.utils import get_index_base
+from haystack.constants import DEFAULT_ALIAS
 
 from .models import Article
 
