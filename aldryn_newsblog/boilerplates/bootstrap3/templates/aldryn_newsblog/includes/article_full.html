@@ -1,0 +1,49 @@
+{% load i18n apphooks_config_tags cms_tags sekizai_tags static thumbnail %}
+
+<article
+    class="aldryn-newsblog-article{% if article.is_featured %} aldryn-newsblog-featured{% endif %}{% if not article.published %} unpublished{% endif %}{% if article.future %} future{% endif %}">
+    {% if article.featured_image_id %}
+    <p class="visual">
+        <a href="{{ article.get_absolute_url }}">
+            <img
+                src="{% thumbnail article.featured_image 800x450 crop subject_location=article.featured_image.subject_location %}"
+                alt="{{ article.featured_image.alt }}" class="img-responsive">
+        </a>
+    </p>
+    {% endif %}
+
+    {% if article.categories %}
+        <p class="category">
+            {% for category in article.categories.all %}
+            <a href="{% namespace_url 'article-list-by-category' category.slug namespace=namespace default='' %}"><span class="label label-default">{{ category.name }}</span></a>{% if not forloop.last %} {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    <h2>
+        {% render_model article "title" %}
+    </h2>
+
+    {% include "aldryn_newsblog/includes/author.html" with author=article.author %}
+
+    <div class="lead">
+        {% render_model article "lead_in" %}
+    </div>
+
+    <div class="content">
+        {% render_placeholder article.content language placeholder_language %}
+    </div>
+
+    {% if article.tags %}
+        <p class="tags well well-sm">
+            Tags:
+            {% for tag in article.tags.all %}
+            <a href="{% namespace_url 'article-list-by-tag' tag=tag.slug namespace=namespace default='' %}"><span class="badge">{{ tag.name }}</span></a>
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    <hr>
+</article>
+
+{% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/aldryn-newsblog/article.css' %}">{% endaddtoblock %}

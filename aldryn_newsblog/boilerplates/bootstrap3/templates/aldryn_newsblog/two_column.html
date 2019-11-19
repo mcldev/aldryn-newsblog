@@ -2,20 +2,18 @@
 {% load i18n cms_tags %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-md-17">
-                {% if view.show_header %}
-                    {% static_placeholder "newsblog_feature" %}
-                {% endif %}
-                <div class="aldryn aldryn-newsblog">
-                    {% block newsblog_content %}{% endblock %}
-                </div>
+    <div class="row">
+        <div class="col-md-8">
+            {% if view.show_header %}
+                {% static_placeholder "newsblog_feature" site %}
+            {% endif %}
+            <div class="aldryn aldryn-newsblog">
+                {% block newsblog_content %}{% endblock %}
             </div>
-            <div class="col-md-7 aldryn-newsblog aldryn-newsblog-sidebar">
-                {% static_placeholder "newsblog_sidebar" %}
-                {% block newsblog_sidebar %}{% endblock %}
-            </div>
+        </div>
+        <div class="col-md-4 aldryn-newsblog aldryn-newsblog-sidebar">
+            {% static_placeholder "newsblog_sidebar" site %}
+            {% block newsblog_sidebar %}{% endblock %}
         </div>
     </div>
     {% block newsblog_footer %}{% endblock %}

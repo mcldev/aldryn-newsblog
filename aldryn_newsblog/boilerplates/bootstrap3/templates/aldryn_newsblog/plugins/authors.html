@@ -1,13 +1,16 @@
-{% load i18n %}
+{% load i18n apphooks_config_tags %}
 
 <div class="aldryn aldryn-newsblog aldryn-newsblog-authors">
-    <ul class="list-unstyled">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <p class="panel-title">{% trans "Authors" %}</p>
+        </div>
+        <div class="list-group">
         {% for author in authors_list %}
-            <li>
-                {% include "aldryn_newsblog/includes/author.html" with author_view="true" namespace=instance.app_config.namespace %}
-            </li>
+            <a class="list-group-item" href="{% namespace_url "article-list-by-author" author.slug namespace=namespace default='' %}">{{ author.name }}<span class="badge pull-right">{{ author.article_count }}</span></a>
         {% empty %}
-            <li class="well">{% trans "No items available" %}</li>
+            <p class="list-group-item">{% trans "No items available" %}</p>
         {% endfor %}
-    </ul>
+        </div>
+    </div>
 </div>

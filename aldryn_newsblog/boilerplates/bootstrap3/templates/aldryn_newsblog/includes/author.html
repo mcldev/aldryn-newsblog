@@ -1,6 +1,6 @@
-{% load i18n staticfiles thumbnail apphooks_config_tags %}
+{% load i18n static thumbnail apphooks_config_tags %}
 
-<div class="aldryn-newsblog-meta">
+<div class="aldryn-newsblog-meta well well-sm">
     {% if author and author.slug %}
         <div class="image pull-left">
             <a href="{% namespace_url "article-list-by-author" author.slug namespace=namespace default='' %}">
@@ -16,7 +16,7 @@
             <p class="author"><a href="{% namespace_url "article-list-by-author" author.slug namespace=namespace default='' %}">{{ author.name }}</a></p>
             {% if author_view and author.slug %}
                 <p class="job">{{ author.function }}</p>
-                <p class="badge">{{ author.article_count }}</p>
+                <p class="badge pull-right">{{ author.article_count }}</p>
             {% else %}
                 <p class="date">{{ article.publishing_date|date }}</p>
             {% endif %}

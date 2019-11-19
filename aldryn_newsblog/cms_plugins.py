@@ -4,12 +4,18 @@ from __future__ import unicode_literals
 
 from distutils.version import LooseVersion
 
-from django.utils.translation import ugettext_lazy as _
+from aldryn_newsblog.utils.utilities import get_valid_languages_from_request
+
+from aldryn_newsblog.views import DateRangeArticleList
+from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _, get_language_from_request
 
 from cms import __version__ as cms_version
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 
+from aldryn_newsblog.forms import NewsBlogCalendarViewPluginForm
+from aldryn_newsblog.models import NewsBlogCalendarViewModel
 from . import forms, models
 from .utils import add_prefix_to_path, default_reverse
 
@@ -202,4 +208,61 @@ class NewsBlogTagsPlugin(NewsBlogPlugin):
         context['article_list_url'] = default_reverse(
             '{0}:article-list'.format(instance.app_config.namespace),
             default=None)
+        return context
+
+
+class ArticleList(DateRangeArticleList):
+    def __init__(self, *args, **kwargs):
+        super(ArticleList, self).__init__(*args, **kwargs)
+        request = kwargs.pop('request')
+        self.valid_languages = get_valid_languages_from_request(self.namespace, request)
+
+    def _daterange_from_kwargs(self, kwargs):
+        date_from = kwargs['from_date']
+        date_to =  kwargs['to_date']
+        return date_from, date_to
+
+
+class ArticleDisplay:
+    get_absolute_url = ''
+    title = ''
+
+
+def call_this(calendar):
+    try:
+        plugin_pk = calendar.id
+        plugin = NewsBlogCalendarViewModel.objects.get(pk=plugin_pk)
+    except (NewsBlogCalendarViewModel.DoesNotExist, KeyError):
+        namespace = 'aldryn_newsblog_default'
+        language = get_language_from_request(calendar.request, check_path=True)
+    else:
+        namespace = plugin.app_config.namespace
+        language = plugin.language
+
+    mth_articles = ArticleList(request=calendar.request, namespace=namespace, language=language, date_from=calendar.first_of_month, date_to=calendar.last_of_month)
+
+    article_qry = mth_articles.get_queryset()
+
+    # Get the tuple of (date, event/article)
+    event_dates = {}
+    for article in article_qry:
+        pub_date = article.publishing_date.date()
+        if pub_date not in event_dates:
+            display_article = ArticleDisplay()
+            display_article.get_absolute_url = reverse('aldryn_newsblog:article-list-by-day', kwargs={'year': pub_date.year, 'month': pub_date.month, 'day': pub_date.day})
+            event_dates[pub_date] = [display_article]
+    return event_dates
+
+
+@plugin_pool.register_plugin
+class NewsBlogCalendarViewPlugin(NewsBlogPlugin):
+    name = _('Calendar View')
+    model = NewsBlogCalendarViewModel
+    form = NewsBlogCalendarViewPluginForm
+    cache = True
+    render_template = "aldryn_newsblog/plugins/calendar_view.html"
+
+    def render(self, context, instance, placeholder):
+        context['id'] = instance.id
+        context['app_model_label'] = 'aldryn_newsblog.cms_plugins.call_this'
         return context

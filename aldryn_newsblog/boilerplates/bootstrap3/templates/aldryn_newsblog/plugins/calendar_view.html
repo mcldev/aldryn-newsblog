@@ -1,0 +1,12 @@
+{% load calendar_tags i18n %}
+
+<div class="aldryn aldryn-newsblog aldryn-newsblog-calendar">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <p class="panel-title">{% trans "Calendar" %}</p>
+        </div>
+        <div class="panel-body">
+        {% get_calendar id=id app_model_label=app_model_label %}
+        </div>
+    </div>
+</div>

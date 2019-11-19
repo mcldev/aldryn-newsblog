@@ -1,7 +1,18 @@
-{% load i18n %}
+{% load cms_tags i18n apphooks_config_tags %}
 
-<div class="aldryn aldryn-newsblog aldryn-newsblog-articles aldryn-newsblog-articles-featured">
-    {% for article in articles_list %}
-        {% include "aldryn_newsblog/includes/article.html" with namespace=instance.app_config.namespace %}
-    {% endfor %}
+<div class="aldryn aldryn-newsblog aldryn-newsblog-articles aldryn-newsblog-featured-articles">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <p class="panel-title">{% trans "Featured Articles" %}</p>
+        </div>
+        <div class="list-group">
+            {% for article in articles_list %}
+                <a class="list-group-item"
+                   href="{% namespace_url 'article-detail' article.slug namespace=namespace default='' %}">{% render_model article "title" %}</a>
+
+            {% empty %}
+                <p class="list-group-item">{% trans "No items available" %}</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>

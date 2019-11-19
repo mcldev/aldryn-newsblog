@@ -2,13 +2,13 @@
 {% load i18n cms_tags apphooks_config_tags %}
 
 {% block title %}{{ article.title }} - {{ block.super }}{% endblock %}
-{% block breadcrumb %}{% endblock %}
+{# {% block breadcrumb %}{% endblock %} #}}
 
 {% block newsblog_content %}
     <div class="aldryn-newsblog-detail">
-        {% include "aldryn_newsblog/includes/article.html" with detail_view="true" %}
+        {% include "aldryn_newsblog/includes/article_full.html" %}
     </div>
-    {% static_placeholder "newsblog_social" %}
+    {% static_placeholder "newsblog_social" site %}
 {% endblock %}
 
 {% block newsblog_footer %}
@@ -27,5 +27,5 @@
             {% endif %}
         </ul>
     </div>
-    {% static_placeholder "newsblog_comments" %}
+    {% static_placeholder "newsblog_comments" site %}
 {% endblock %}

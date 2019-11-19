@@ -1,15 +1,17 @@
 {% load i18n apphooks_config_tags %}
 
- <div class="aldryn aldryn-newsblog aldryn-newsblog-categories">
-    <ul class="list-unstyled">
-        <li{% if not newsblog_category %} class="active"{% endif %}>
-            <a href="{% namespace_url "article-list" namespace=instance.app_config.namespace default='' %}">{% trans "All" %}</a>
-        </li>
-        {% for category in categories %}
-            <li{% if newsblog_category.id == category.id %} class="active"{% endif %}>
-                <span class="badge">{{ category.article_count }}</span>
-                <a href="{% namespace_url "article-list-by-category" category.slug namespace=instance.app_config.namespace default='' %}">{{ category.name }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+<div class="aldryn aldryn-newsblog aldryn-newsblog-categories">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <p class="panel-title">{% trans "Categories" %}</p>
+        </div>
+        <div class="list-group">
+            {% for category in categories %}
+                <a class="list-group-item{% if newsblog_category.id == category.id %} active{% endif %}"
+                   href="{% namespace_url "article-list-by-category" category.slug namespace=instance.app_config.namespace default='' %}">{{ category.name }}<span class="badge">{{ category.article_count }}</span></a>
+            {% empty %}
+                <p class="list-group-item">{% trans "No items available" %}</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>

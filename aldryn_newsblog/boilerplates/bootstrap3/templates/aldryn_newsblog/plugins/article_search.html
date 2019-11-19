@@ -1,19 +1,28 @@
-{% load i18n sekizai_tags staticfiles %}
+{% load i18n sekizai_tags static %}
 
-<div class="aldryn aldryn-newsblog aldryn-newsblog-article-search js-aldryn-newsblog-article-search">
-    <form action="{{ query_url }}" class="form-inline" method="get">
-        {% csrf_token %}
-        <input type="hidden" name="max_articles" value="{{ instance.max_articles }}">
-        <div class="input-group">
-            <label for="field-{{ instance.pk }}-keyword" class="sr-only">{% trans "Keyword search" %}</label>
-            <input type="text" name="q" class="form-control" id="field-{{ instance.pk }}-keyword" placeholder="{% trans 'Keyword' %}"{% if query_url == None %} disabled{% endif %}>
-            <span class="input-group-btn">
-                <button type="submit" class="btn btn-primary"{% if query_url == None %} disabled{% endif %}>{% trans "Go" %}</button>
-            </span>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <p class="panel-title">{% trans "Article Search" %}</p>
+    </div>
+    <div class="panel-body">
+        <div class="aldryn aldryn-newsblog aldryn-newsblog-article-search js-aldryn-newsblog-article-search">
+            <form action="{{ query_url }}" class="form-inline" method="get">
+                {% csrf_token %}
+                <input type="hidden" name="max_articles" value="{{ instance.max_articles }}">
+                <div class="input-group">
+                    <label for="field-{{ instance.pk }}-keyword" class="sr-only">{% trans "Keyword search" %}</label>
+                    <input type="text" name="q" class="form-control" id="field-{{ instance.pk }}-keyword"
+                           placeholder="{% trans 'Keyword' %}"{% if query_url == None %} disabled{% endif %}>
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default"{% if query_url == None %}
+                                disabled{% endif %} aria-label="Search News"><span class="fa fa-search"></span></button>
+                    </span>
+                </div>
+            </form>
+
+            <div class="search-results js-search-results"></div>
         </div>
-    </form>
-
-    <div class="search-results js-search-results"></div>
+    </div>
 </div>
 
 {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/aldryn-newsblog/article.css' %}">{% endaddtoblock %}

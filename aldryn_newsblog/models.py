@@ -585,3 +585,10 @@ def update_search_data(sender, instance, **kwargs):
                     instance.language).get(content=placeholder.pk)
                 article.search_data = article.get_search_data(instance.language)
                 article.save()
+
+
+@python_2_unicode_compatible
+class NewsBlogCalendarViewModel(NewsBlogCMSPlugin):
+    def __str__(self):
+        return 'NewsBlog Calendar View'
+
