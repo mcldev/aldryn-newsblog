@@ -16,7 +16,7 @@ from django.utils.text import smart_split
 
 from cms.plugin_rendering import ContentRenderer
 from cms.utils.i18n import force_language, get_language_object
-
+from sekizai.context import SekizaiContext
 from lxml.html.clean import Cleaner as LxmlCleaner
 
 
@@ -104,8 +104,8 @@ def get_field_value(obj, name):
 
 def render_plugin(request, plugin_instance):
     renderer = ContentRenderer(request)
-    context = {'request': request}
-    return renderer.render_plugin(plugin_instance, context)
+    # context = {'request': request}
+    return renderer.render_plugin(plugin_instance, SekizaiContext(request))
 
 
 def get_plugin_index_data(base_plugin, request):

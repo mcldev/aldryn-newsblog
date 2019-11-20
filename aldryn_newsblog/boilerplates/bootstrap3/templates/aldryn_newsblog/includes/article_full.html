@@ -12,14 +12,6 @@
     </p>
     {% endif %}
 
-    {% if article.categories %}
-        <p class="category">
-            {% for category in article.categories.all %}
-            <a href="{% namespace_url 'article-list-by-category' category.slug namespace=namespace default='' %}"><span class="label label-default">{{ category.name }}</span></a>{% if not forloop.last %} {% endif %}
-            {% endfor %}
-        </p>
-    {% endif %}
-
     <h2>
         {% render_model article "title" %}
     </h2>
@@ -34,9 +26,18 @@
         {% render_placeholder article.content language placeholder_language %}
     </div>
 
-    {% if article.tags %}
+    {% if article.categories.exists %}
+        <p class="category well well-sm">
+            <small>{% trans 'Categories:' %}</small>
+            {% for category in article.categories.all %}
+            <a href="{% namespace_url 'article-list-by-category' category.slug namespace=namespace default='' %}"><span class="label label-default">{{ category.name }}</span></a>{% if not forloop.last %} {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    {% if article.tags.exists %}
         <p class="tags well well-sm">
-            Tags:
+            <small>{% trans 'Tags:' %}</small>
             {% for tag in article.tags.all %}
             <a href="{% namespace_url 'article-list-by-tag' tag=tag.slug namespace=namespace default='' %}"><span class="badge">{{ tag.name }}</span></a>
             {% endfor %}

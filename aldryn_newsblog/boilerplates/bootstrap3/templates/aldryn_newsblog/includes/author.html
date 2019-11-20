@@ -1,25 +1,27 @@
 {% load i18n static thumbnail apphooks_config_tags %}
 
-<div class="aldryn-newsblog-meta well well-sm">
+<div class="aldryn-newsblog-meta panel panel-default">
     {% if author and author.slug %}
-        <div class="image pull-left">
-            <a href="{% namespace_url "article-list-by-author" author.slug namespace=namespace default='' %}">
-                {% if author.visual %}
-                    {% thumbnail author.visual "50x50" crop upscale subject_location=author.visual.subject_location as author_image %}
-                    <img src="{{ author_image.url }}" width="50" height="50" alt="{{ author }}">
+        <div class="media panel-body ">
+            <div class="media-left">
+                <a href="{% namespace_url "article-list-by-author" author.slug namespace=namespace default='' %}">
+                    {% if author.visual %}
+                        {% thumbnail author.visual "50x50" crop upscale subject_location=author.visual.subject_location as author_image %}
+                        <img src="{{ author_image.url }}" width="50" height="50" alt="{{ author }}">
+                    {% else %}
+                        <img src="{% static "img/aldryn_newsblog/no-photo.png" %}" height="50" width="50" alt="{{ author }}">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading"><a href="{% namespace_url "article-list-by-author" author.slug namespace=namespace default='' %}">{{ author.name }}</a></h4>
+                {% if author_view and author.slug %}
+                    <p class="job">{{ author.function }}</p>
+                    <p class="badge pull-right">{{ author.article_count }}</p>
                 {% else %}
-                    <img src="{% static "img/aldryn_newsblog/no-photo.png" %}" height="50" width="50" alt="{{ author }}">
+                <small class="date"><i> Posted on {{ article.publishing_date|date:"d F Y" }}</i></small>
                 {% endif %}
-            </a>
-        </div>
-        <div class="meta">
-            <p class="author"><a href="{% namespace_url "article-list-by-author" author.slug namespace=namespace default='' %}">{{ author.name }}</a></p>
-            {% if author_view and author.slug %}
-                <p class="job">{{ author.function }}</p>
-                <p class="badge pull-right">{{ author.article_count }}</p>
-            {% else %}
-                <p class="date">{{ article.publishing_date|date }}</p>
-            {% endif %}
+            </div>
         </div>
     {% endif %}
 </div>

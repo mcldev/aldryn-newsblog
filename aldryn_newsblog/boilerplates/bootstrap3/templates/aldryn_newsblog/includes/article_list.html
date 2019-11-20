@@ -2,97 +2,33 @@
 
 
 {% for article in article_list %}
-  <div class="col-sm-6 col-md-4">
-     <div class="thumbnail
-                {% if article.is_featured %} aldryn-newsblog-featured alert-info {% endif %}
+<div class="col-sm-6 col-md-4">
+    <div class="thumbnail
+                {% if article.is_featured %} aldryn-newsblog-featured alert-warning {% endif %}
                 {% if not article.published %} unpublished{% endif %}
                 {% if article.future %} future{% endif %}">
 
-            <a href="{{ article.get_absolute_url }}">
-                {% if article.featured_image_id %}
-                    <img src="{% thumbnail article.featured_image 450x450 crop upscale subject_location=article.featured_image.subject_location %}"
-                         alt="{% if article.featured_image.alt %}{{ article.featured_image.alt }}{% else %}{{ article.title }}{% endif %}"
-                         class="img-responsive article-thumbnail">
-                {% else %}
-                    <img src="http://placehold.it/450x450" alt="">
-                {% endif %}
-            </a>
-          <div class="caption">
-                <h3 class="title">{% render_model article "title" %}</h3>
-
+        <a href="{{ article.get_absolute_url }}">
+            {% if article.featured_image_id %}
+                <img
+                    src="{% thumbnail article.featured_image 450x450 crop upscale subject_location=article.featured_image.subject_location %}"
+                    alt="{% if article.featured_image.alt %}{{ article.featured_image.alt }}{% else %}{{ article.title }}{% endif %}"
+                    class="img-responsive article-thumbnail">
+            {% elif request.user.is_authenticated %}
+                <img src="http://placehold.it/450x450" alt="">
+            {% endif %}
+        </a>
+        <div class="caption">
+            <h3 class="title"><a
+                href="{% namespace_url 'article-detail' article.slug namespace=namespace default='' %}">{% render_model article "title" %}</a></h3>
+            <small class="date"><i class="fa fa-calendar"></i> {{ article.publishing_date|date:"d F Y" }}</small>
             <p class="summary">{% render_model article "lead_in" "" "" "truncatewords_html:'20'" %}</p>
             <p><a class="btn btn-default btn-xs"
-               href="{{ article.get_absolute_url }}">Read <i class="fa fa-angle-right"
-                                                             aria-hidden="true"></i>
+                  href="{{ article.get_absolute_url }}">Read <i class="fa fa-angle-right" aria-hidden="true"></i>
             </a></p>
         </div>
     </div>
-  </div>
-
-
-<!--    <article class="aldryn-newsblog-article-->
-<!--                    {% if article.is_featured %} aldryn-newsblog-featured{% endif %}-->
-<!--                    {% if not article.published %} unpublished{% endif %}-->
-<!--                    {% if article.future %} future{% endif %}">-->
-<!--        -->
-<!--        {% if article.featured_image_id %}-->
-<!--            <p class="visual">-->
-<!--                {% if not detail_view %}-->
-<!--                    <a href="{{ article.get_absolute_url }}">-->
-<!--                {% endif %}-->
-<!--                <img src="{% thumbnail article.featured_image 800x450 crop subject_location=article.featured_image.subject_location %}" alt="{{ article.featured_image.alt }}" class="img-responsive">-->
-<!--                {% if not detail_view %}-->
-<!--                    </a>-->
-<!--                {% endif %}-->
-<!--            </p>-->
-<!--        {% endif %}-->
-<!--    -->
-<!--        {% if article.categories %}-->
-<!--            <p class="category">-->
-<!--                {% for category in article.categories.all %}-->
-<!--                    <a href="{% namespace_url 'article-list-by-category' category.slug namespace=namespace default='' %}">{{ category.name }}</a>{% if not forloop.last %}, {% endif %}-->
-<!--                {% endfor %}-->
-<!--            </p>-->
-<!--        {% endif %}-->
-<!--    -->
-<!--        <h2>-->
-<!--            {% if not detail_view %}-->
-<!--                <a href="{% namespace_url 'article-detail' article.slug namespace=namespace default='' %}">{% render_model article "title" %}</a>-->
-<!--            {% else %}-->
-<!--                {% render_model article "title" %}-->
-<!--            {% endif %}-->
-<!--        </h2>-->
-<!--    -->
-<!--        {% if not detail_view %}-->
-<!--            <div class="lead">-->
-<!--                {% render_model article "lead_in" "" "" "truncatewords_html:'20'" %}-->
-<!--            </div>-->
-<!--        {% endif %}-->
-<!--    -->
-<!--        {% include "aldryn_newsblog/includes/author.html" with author=article.author %}-->
-<!--    -->
-<!--        {% if article.tags and detail_view %}-->
-<!--            <p class="tags">-->
-<!--                {% for tag in article.tags.all %}-->
-<!--                    <a href="{% namespace_url 'article-list-by-tag' tag=tag.slug namespace=namespace default='' %}">{{ tag.name }}</a>-->
-<!--                {% endfor %}-->
-<!--            </p>-->
-<!--        {% endif %}-->
-<!--    -->
-<!--        {% if detail_view %}-->
-<!--            <div class="lead">-->
-<!--                {% render_model article "lead_in" %}-->
-<!--            </div>-->
-<!--        {% endif %}-->
-<!--    -->
-<!--        {% if detail_view %}-->
-<!--            <div class="content">-->
-<!--                {% render_placeholder article.content language placeholder_language %}-->
-<!--            </div>-->
-<!--        {% endif %}-->
-<!--    -->
-<!--        <hr>-->
-<!--    </article>-->
+</div>
 {% endfor %}
 
 {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/aldryn-newsblog/article.css' %}">{% endaddtoblock %}
