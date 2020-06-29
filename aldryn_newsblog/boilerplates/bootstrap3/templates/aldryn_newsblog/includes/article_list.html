@@ -2,9 +2,9 @@
 
 
 {% for article in article_list %}
-<div class="col-sm-6 col-md-4">
+<div class="col-sm-6">
     <div class="thumbnail
-                {% if article.is_featured %} aldryn-newsblog-featured alert-warning {% endif %}
+                {% if article.is_featured %} aldryn-newsblog-featured {% endif %}
                 {% if not article.published %} unpublished{% endif %}
                 {% if article.future %} future{% endif %}">
 
@@ -23,9 +23,9 @@
                 href="{% namespace_url 'article-detail' article.slug namespace=namespace default='' %}">{% render_model article "title" %}</a></h3>
             <small class="date"><i class="fa fa-calendar"></i> {{ article.publishing_date|date:"d F Y" }}</small>
             <p class="summary">{% render_model article "lead_in" "" "" "truncatewords_html:'20'" %}</p>
-            <p><a class="btn btn-default btn-xs"
-                  href="{{ article.get_absolute_url }}">Read <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </a></p>
+            <a class="btn btn-default btn-xs" href="{{ article.get_absolute_url }}" aria-hidden="true">
+                Read <i class="fa fa-angle-right"></i>
+            </a>
         </div>
     </div>
 </div>

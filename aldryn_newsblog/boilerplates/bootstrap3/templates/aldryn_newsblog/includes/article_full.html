@@ -4,17 +4,13 @@
     class="aldryn-newsblog-article{% if article.is_featured %} aldryn-newsblog-featured{% endif %}{% if not article.published %} unpublished{% endif %}{% if article.future %} future{% endif %}">
     {% if article.featured_image_id %}
     <p class="visual">
-        <a href="{{ article.get_absolute_url }}">
-            <img
-                src="{% thumbnail article.featured_image 800x450 crop subject_location=article.featured_image.subject_location %}"
-                alt="{{ article.featured_image.alt }}" class="img-responsive">
-        </a>
+        <img
+            src="{% thumbnail article.featured_image 800x450 crop subject_location=article.featured_image.subject_location %}"
+            alt="{{ article.featured_image.alt }}" class="img-responsive">
     </p>
     {% endif %}
 
-    <h2>
-        {% render_model article "title" %}
-    </h2>
+    <h2>{% render_model article "title" %}</h2>
 
     {% include "aldryn_newsblog/includes/author.html" with author=article.author %}
 
