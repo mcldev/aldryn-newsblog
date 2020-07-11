@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 
 from datetime import date, datetime
-
+from django.utils.timezone import make_aware
+from django.conf import settings
 from django.db.models import Q
 from django.http import (
     Http404, HttpResponsePermanentRedirect, HttpResponseRedirect,
@@ -376,6 +377,42 @@ class DateRangeArticleList(ArticleListBase):
             publishing_date__gte=self.date_from,
             publishing_date__lt=self.date_to
         )
+
+    _date_from = None
+    _date_to = None
+
+    # DATE FROM:
+    @property
+    def date_from(self):
+        return self._date_from
+
+    @date_from.setter
+    def date_from(self, value):
+        if settings.USE_TZ:
+            self._date_from = make_aware(value)
+        else:
+            self._date_from = value
+
+    @date_from.deleter
+    def date_from(self):
+        del self._date_from
+
+    # DATE TO:
+    @property
+    def date_to(self):
+        return self._date_to
+
+    @date_to.setter
+    def date_to(self, value):
+        if settings.USE_TZ:
+            self._date_to = make_aware(value)
+        else:
+            self._date_to = value
+
+    @date_to.deleter
+    def date_to(self):
+        del self._date_to
+
 
     def _daterange_from_kwargs(self, kwargs):
         raise NotImplementedError('Subclasses of DateRangeArticleList need to'
