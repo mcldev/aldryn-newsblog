@@ -63,7 +63,6 @@ SQL_IS_TRUE = {
 }[connection.vendor]
 
 
-@python_2_unicode_compatible
 class Article(TranslatedAutoSlugifyMixin,
               TranslationHelperMixin,
               TranslatableModel):
@@ -311,7 +310,6 @@ class NewsBlogCMSPlugin(CMSPlugin):
         self.app_config = old_instance.app_config
 
 
-@python_2_unicode_compatible
 class NewsBlogArchivePlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
                             NewsBlogCMSPlugin):
     # NOTE: the PluginEditModeMixin is eventually used in the cmsplugin, not
@@ -331,7 +329,6 @@ class NewsBlogArticleSearchPlugin(NewsBlogCMSPlugin):
         return ugettext('%s archive') % (self.app_config.get_app_title(), )
 
 
-@python_2_unicode_compatible
 class NewsBlogAuthorsPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
     def get_authors(self, request):
         """
@@ -372,7 +369,6 @@ class NewsBlogAuthorsPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
         return ugettext('%s authors') % (self.app_config.get_app_title(), )
 
 
-@python_2_unicode_compatible
 class NewsBlogCategoriesPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
     def __str__(self):
         return ugettext('%s categories') % (self.app_config.get_app_title(), )
@@ -414,7 +410,6 @@ class NewsBlogCategoriesPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
         return sorted(categories, key=lambda x: x.article_count, reverse=True)
 
 
-@python_2_unicode_compatible
 class NewsBlogFeaturedArticlesPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
     article_count = models.PositiveIntegerField(
         default=1,
@@ -450,7 +445,6 @@ class NewsBlogFeaturedArticlesPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
         return '{0} {1}'.format(prefix, title)
 
 
-@python_2_unicode_compatible
 class NewsBlogLatestArticlesPlugin(PluginEditModeMixin,
                                    AdjustableCacheModelMixin,
                                    NewsBlogCMSPlugin):
@@ -496,7 +490,6 @@ class NewsBlogLatestArticlesPlugin(PluginEditModeMixin,
         }
 
 
-@python_2_unicode_compatible
 class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
                             CMSPlugin):
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
@@ -525,7 +518,6 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
         return ugettext('Related articles')
 
 
-@python_2_unicode_compatible
 class NewsBlogTagsPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
 
     def get_tags(self, request):
@@ -587,7 +579,6 @@ def update_search_data(sender, instance, **kwargs):
                 article.save()
 
 
-@python_2_unicode_compatible
 class NewsBlogCalendarViewModel(NewsBlogCMSPlugin):
     def __str__(self):
         return 'NewsBlog Calendar View'
